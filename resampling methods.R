@@ -239,6 +239,30 @@ legend("topright",c("single tree","majority vote","averaging prob"),lty=c(2,1,1)
 #black curve: the test error rates for majority vote
 #blue curve: the test error rates for averaging the probabilities
 
+#we can calculate and plot the test error rate with random forest of different mtry (number of variables sampled when splitting)
+#we can call the test set directly in the function
+
+testErrorRate <- rep(0,7) 
+for(i in 1:7){ 
+  set.seed(6) 
+  bag.titanic01 <- randomForest(survived01 ~ .-survived, data=titanic3, subset=train, mtry=i, importance=TRUE, xtest=x_test, ytest=survived01.test, ntree=500) 
+  testErrorRate[i] <- bag.titanic01$test$err.rate[500,1] 
+} 
+
+plot(testErrorRate,type="b",xlab="mtry",ylab="Test Error Rate")
+
+#the last plot will display the test error rate of random forest of 7 different mtry value
+
+plot(0, xlab="Number of Trees",ylab="Test Error Rate", xlim=c(1,540), ylim =c(0.18,0.28))
+
+
+for(i in 1:7){ 
+  bag.titanic01 <- randomForest(survived01 ~ .-survived, data=titanic3, subset=train, mtry=i, importance=TRUE, xtest=x_test, ytest=survived01.test, ntree=500)
+  lines(bag.titanic01$test$err.rate[,1],col=i,type="l")
+}
+
+legend(title = "mtry", "topright", c("1","2","3","4","5","6","7"), lty=rep(1,7),col=1:7)
+
 
 
 
